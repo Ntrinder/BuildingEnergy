@@ -3,7 +3,7 @@
 %% ----------------------------------------------------------------
 
 % Set up the document
-\documentclass[a4paper, 11pt, oneside]{Thesis}  % Use the "Thesis" style, based on the ECS Thesis style by Steve Gunn
+\documentclass[a4paper, 12pt, oneside]{Thesis}  % Use the "Thesis" style, based on the ECS Thesis style by Steve Gunn
 \graphicspath{Figures/}  % Location of the graphics files (set up for graphics to be in PDF format)
 
 % Include any extra LaTeX packages required
@@ -14,6 +14,7 @@
 \usepackage[table]{xcolor}
 \usepackage{array, tabularx, caption, boldline}
 \usepackage{float}
+\usepackage[utf8x]{inputenc}
 \hypersetup{urlcolor=black, colorlinks=true}  % Colours hyperlinks in black, can be distracting if there are many links and colored blue.
 
 %% ----------------------------------------------------------------
@@ -47,7 +48,7 @@
 
 \addtocontents{toc}{\vspace{1em}}  % Add a gap in the Contents, for aesthetics
 
-I, Niall Trinder, declare that this thesis titled, `Supervised \& Unsupervised Learning Methods to Produce Consumer Energy Profiles?' and the work presented in it are my own. I confirm that:
+I, Niall Trinder, declare that this thesis titled, `Supervised \& Unsupervised Learning Methods to Produce Consumer Energy Profiles' and the work presented in it are my own. I confirm that:
 
 \begin{itemize}
 \item[\tiny{$\blacksquare$}] This work was done wholly or mainly while in candidature for an undergraduate degree at Cork Institute of Technology.
@@ -80,8 +81,9 @@ Date:\\
 \abstract{
 \addtocontents{toc}{\vspace{1em}}  % Add a gap in the Contents, for aesthetics
 
-Currently in developed nations, building energy consumption makes up approximately 39\% of primary energy consumption ~\cite{energy2011building}. As we see dense urban areas continue to grow and spread, one stand out opportunity looking forward for the energy sector is energy demand forecasting.\\
-\indent In recent times, approaches to data analytics have been adopted in almost every aspect of society. As this adoption continues we see new methodologies being developed in order to deal with the ever-increasing quantity of data being generated. The challenge of capturing, storing and processing extraordinary large volumes of data is commonly referred to as big data. A major challenge of this paradigm is our ability to perform an analysis and extract meaningful insights from big data in any sort of time sensitive situations. This requires intelligent and innovative solutions to overcome these challenges. This dissertation explores the issues surrounding this challenge and identifies the opportunities to be realised using new technologies to identify valuable insights in consumption patterns. 
+Currently in developed nations, building energy consumption makes up approximately 39\% of primary energy consumption ~\cite{energy2011building}. As we see dense urban areas continue to grow and spread, strategic planning of energy infrastructure becomes more important but also more complicated
+
+\indent In recent times, approaches to data analytics have been adopted in almost every aspect of society. As this adoption continues we see new methodologies being developed in order to deal with the ever-increasing quantity of data being generated. The challenge of capturing, storing and processing extraordinary large volumes of data is commonly referred to as big data. A major challenge of this paradigm is our ability to perform analysis and extract meaningful insights from big data in any sort of time sensitive situations. This requires intelligent and innovative solutions to overcome these challenges. This dissertation sought out to use thousands of smart meter energy consumption time series data taken from domestic dwellings to identify distinct groups or clusters. The resulting clusters were analyzed and then combined with geographic and demographic data collected from the residents. Further work is outlined in order to to use this data to predict which cluster the consumer belonged to, as such this would allow for energy demand predictions based off geographic and demographic information.
 
 }
 
@@ -94,7 +96,7 @@ Currently in developed nations, building energy consumption makes up approximate
 \acknowledgements{
 \addtocontents{toc}{\vspace{1em}}  % Add a gap in the Contents, for aesthetics
 
-The acknowledgements and the people to thank go here, don't forget to include your project adviser\ldots
+I would like to thank my supervisor at CIT, Dr. Ruairí O'Reilly for his guidance and input throughout the project. I would also like to thank Mr Aengus Daly of CIT for this feedback and advice on the project.
 
 }
 \clearpage  % End of the Acknowledgements
@@ -111,9 +113,6 @@ The acknowledgements and the people to thank go here, don't forget to include yo
 \lhead{\emph{List of Figures}}  % Set the left side page header to "List if Figures"
 \listoffigures  % Write out the List of Figures
 
-%% ----------------------------------------------------------------
-\lhead{\emph{List of Tables}}  % Set the left side page header to "List of Tables"
-\listoftables  % Write out the List of Tables
 
 %% ----------------------------------------------------------------
 \setstretch{1.5}  % Set the line spacing to 1.5, this makes the following tables easier to read
@@ -122,8 +121,14 @@ The acknowledgements and the people to thank go here, don't forget to include yo
 \listofsymbols{ll}  % Include a list of Abbreviations (a table of two columns)
 {
 % \textbf{Acronym} & \textbf{W}hat (it) \textbf{S}tands \textbf{F}or \\
-\textbf{LAH} & \textbf{L}ist \textbf{A}bbreviations \textbf{H}ere \\
-
+\textbf{EDA}  & \textbf{E}xploratory    \textbf{D}ata   \textbf{A}nalysis\\
+\textbf{RF}   & \textbf{R}andom         \textbf{F}orest\\
+\textbf{SVM}  & \textbf{S}upport        \textbf{V}ector \textbf{M}achine\\
+\textbf{kWh}  & \textbf{k}ilo           \textbf{W}att   \textbf{h}our\\
+\textbf{IEN}  & \textbf{I}ntelligent    \textbf{E}nergy \textbf{N}etwork\\
+\textbf{LCSS} & \textbf{L}east          \textbf{C}ommon \textbf{S}ub    \textbf{S}equence\\
+\textbf{DTW}  & \textbf{D}ynamic        \textbf{T}ime   \textbf{W}arp\\
+\textbf{CV}   & \textbf{C}ross          \textbf{V}alidation\\
 }
 
 
@@ -155,8 +160,6 @@ The acknowledgements and the people to thank go here, don't forget to include yo
 \appendix % Cue to tell LaTeX that the following 'chapters' are Appendices
 
 \input{Appendices/AppendixA}	% Appendix Title
-
-\input{Appendices/AppendixB} % Appendix Title
 
 %\input{Appendices/AppendixC} % Appendix Title
 

@@ -3,20 +3,15 @@
 In this chapter, each of the elements of the work flow outlined in this project are discussed with relation to work published in similar areas. The areas of particular focus are data pre-processing, unsupervised learning and supervised learning. Each section will outline and explain certain concepts covered in this thesis and also look at papers with similar challenges.
 \lhead{\emph{Background}}
 \section{Data Pre-processing}
-Data pre-processing is the work done to transform a data-set prior to applying any machine learning algorithms. On a basic level, different algorithms require different structures to the data in order to compile. An example of this is some algorithms handling missing data poorly so often the data points with missing values are investigated and either removed or imputed. There are many other potential roadblocks that can prevent an algorithm from working such as correct date formatting, there are also another set of operations which transform the existing data in order to increase the performance of the model. For instance removing outliers, normalizing the data set or accounting for seasonal difference will all help towards improving the accuracy of the model. Depending on the data set and the aim of the model, the steps taken in the data pre-processing can vary. Models that work with word processing will have to tokenize the words and count the frequency[REFERENCE], some data sets containing variables such as gender or colour are transformed into dummy variables which represent categorical variables as binary variables.
+Data pre-processing is the work done to transform a data-set prior to applying any machine learning algorithms. On a basic level, different algorithms require different structures to the data in order to compile. An example of this is some algorithms handling missing data poorly so often the data points with missing values are investigated and either removed or imputed. There are many other potential roadblocks that can prevent an algorithm from working such as correct date formatting, there are also another set of operations which transform the existing data in order to increase the performance of the model. For instance removing outliers, normalizing the data set or accounting for seasonal difference will all help towards improving the accuracy of the model. Depending on the data set and the aim of the model, the steps taken in the data pre-processing can vary. Models that work with word processing will have to tokenize the words and count the frequency, some data sets containing variables such as gender or colour are transformed into dummy variables which represent categorical variables as binary variables.
 
-***WHAT SORT OF DATA PRE-PROCESSING HAS BEEN DONE ON TIME SERIES DATA***\\
-Something on accounting for seasonal differences 
-\\
-https://ieeexplore-ieee-org.cit.idm.oclc.org/document/1703140
 \\
 
-***PRE-PROCESSING WITH LARGE DATA SETS??***
 
 \section{Unsupervised Learning}
 \subsection{Clustering}
-Clustering is a solution for classifying and labelling data into distinct classes when there is no prior knowledge about the existence of these classes, this is referred to as unsupervised classification. This project will analyse energy consumption data of domestic consumers measured on a one minute time resolution over the period of 1 year. The initial goal is to partition the consumers based on habitual behaviour in order to develop energy consumption profiles, the role of clustering becomes clear. \\
-Clustering is the process of taking $n$ number of data points and fitting them to $j$ number of disjointed clusters. In this scenario, all data points within an individual cluster are similar however each cluster is distinct from any other. There are numerous techniques used for unsupervised clustering, one of which is $k$-means clustering, favoured by virtue of being one of the more straight forward techniques available. $k$-means clustering finds the partition of the data given $n$ number of observations into $k (\leq n)$ sets $S = \{S_1,S_2, \dots, S_k\}$ so as to minimize the within-cluster sum of squares. This can be represented as the following:
+Clustering is a solution for classifying and labelling data into distinct classes when there is no prior knowledge about the existence of these classes, this is referred to as unsupervised classification. This project will analyse energy consumption data of domestic consumers measured on a 30 minute time resolution over the period of 2 years. The initial goal is to partition the consumers based on habitual behaviour in order to develop energy consumption profiles, the role of clustering becomes clear. \\
+Clustering is the process of taking $n$ number of data points and fitting them to $j$ number of disjointed clusters. In this scenario, all data points within an individual cluster are similar however each cluster is distinct from any other. There are numerous techniques used for unsupervised clustering, one of which is $k$-means clustering, favoured by virtue of being one of the more straight forward techniques available ~\cite{KMC}. $k$-means clustering finds the partition of the data given $n$ number of observations into $k (\leq n)$ sets $S = \{S_1,S_2, \dots, S_k\}$ so as to minimize the within-cluster sum of squares. This can be represented as the following:
 
 \begin{equation}
 \stackrel{arg min}{_{S}} \sum_{i=1}^k \sum_{x \epsilon S_{i}} \Vert x-\mu_{i} \Vert ^{2} = \stackrel{arg min}{_{S}}  |S_{i}|  Var S_{i}
@@ -29,12 +24,12 @@ A limitation of the $k$-means is that it is only optimal for spherical clusters.
 
 One common method used to predict or monitor future values for time series data is classification methods which assign a category to patterns in the series. 
 
-\subsection{Hierarchal Clustering}
-Similarity or dissimilarity is a method by which a data set can be partitioned based on the distance between static objects. There are different distance measurements designed for specifying similarity between time-series. Hausdorff distance, modified Hausdorff (MODDH) HMM-based distance, Euclidean distance, Euclidean distance in a PCA subspace, and Longest Common Sub Sequence (LCSS) are the most popular distance measurement methods that are used for time-series data (Aghabozorgi, Seyed Shirkhorshidi and Ying Wah, 2015)\\
-In building energy profiles, for balanced general solutions, Euclidean distance is the measure that obtains the best results. Dynamic Time Warping (DTW) distance can be regarded as an improved alternative distance measurement over Euclidean distance in applications that make the most of better representation of the high-similar nuclei and where losing capabilities to capture and average the no-so-similar samples is not a critical factor.(Iglesias and Kastner, 2013)\\
+\subsection{Hierarchical Clustering}
+Similarity or dissimilarity is a method by which a data set can be partitioned based on the distance between static objects . There are different distance measurements designed for specifying similarity between time-series. Hausdorff distance, modified Hausdorff (MODDH) HMM-based distance, Euclidean distance, Euclidean distance in a PCA subspace, and Longest Common Sub Sequence (LCSS) are the most popular distance measurement methods that are used for time-series data \cite{AGHABOZORGI201516}.\\
+In building energy profiles, for balanced general solutions, Euclidean distance is the measure that obtains the best results. Dynamic Time Warping (DTW) distance can be regarded as an improved alternative distance measurement over Euclidean distance in applications that make the most of better representation of the high-similar nuclei and where losing capabilities to capture and average the no-so-similar samples is not a critical factor ~\cite{8581840920130201}.\\
 
 \subsection{Distance Measurement MPdist}
-As mentioned above, Euclidean Distance and Dynamic Time Warp (DTW) have been accepted into the community as two effective measurement distances but these measures are not without fault as we can see in [reference]. Shaghayegh et al. introduces a new measure called MPdist, the advantage of this measurement is being able to handle missing values or spurious regions. Additionally using this measurement over the Euclidean or DTW measures increases computation efficiency. In the field of energy consumption where a huge amount of data is continually generated, this is advantages as it allows for analysis on larger quantities of data streams. Some necessary definitions must be outlined before defining the MPdist formula as found in [].\\
+As mentioned above, Euclidean Distance and Dynamic Time Warp (DTW) have been accepted into the community as two effective measurement distances but these measures are not without fault as we can see in ~\cite{Gharghabi2018AnUT}. Shaghayegh et al. introduces a new measure called MPdist, the advantage of this measurement is being able to handle missing values or spurious regions. Additionally using this measurement over the Euclidean or DTW measures increases computation efficiency. In the field of energy consumption where a huge amount of data is continually generated, this is advantages as it allows for analysis on larger quantities of data streams. Some necessary definitions must be outlined before defining the MPdist formula as found in ~\cite{Gharghabi2018AnUT}.\\
 
 
 \textbf{Definition 1:} A Time Series T = $t_1, t_2, \dots, t_n$ is a sequence of $n$ real values. MPdist is a distance measurement between two time series.\\
@@ -107,32 +102,12 @@ MPdist = \Bigg\{
     {|P_{ABBA}| \leq k}
 \end{equation}
 
-The worse case complexity of MPdist is $O(n^2)$ which would make it unsuitable for large datasets.However as shown in [], the complexity can be reduced to $O(m \times SubseqNum)$ time.
-
-\\
-%SOME DEFINITIONS FROM SAME PAPER
-%• Euclidean Distance: Two time series are considered similar if one is a noisy
-%version of the other
-%• Dynamic Time Warping: Two time series considered are similar if, after nonlinear adjusting the time axis, %they can be made similar under Euclidean Distance
-%• LCSS Distance: Two time series are considered similar if, after deleting some
-%small sections from one of them, they can be made similar under the DTW
-%Distance1
-%• K-Shape: Two time series are considered similar if, after some circular shift of the
-%time axis, they can be made similar under Euclidean Distance2
+The worse case complexity of MPdist is $O(n^2)$ which would make it unsuitable for large datasets.However as shown in ~\cite{Gharghabi2018AnUT}, the complexity can be reduced to $O(m \times SubseqNum)$ time.
 
 
-
-% ADD THESE REFERENCES
-%Aghabozorgi, S., Seyed Shirkhorshidi, A. and Ying Wah, T. (2015) 'Time-series clustering – A decade review', Information Systems, 53, pp. 16-38.
-%Iglesias, F. and Kastner, W. (2013) 'Analysis of Similarity Measures in Times Series Clustering for the Discovery of Building Energy Patterns', Energies, 6(2), pp. 579-597.
-%Molina-Solana, M., Ros, M., Ruiz, M. D., Gómez-Romero, J. and Martin-Bautista, M. J. (2017) 'Data science for building energy management: A review', Renewable and Sustainable Energy Reviews, 70, pp. 598-609.
-%An Ultra-Fast Time Series Distance Measure to
-%allow Data Mining in more Complex Real-World
-%Deployments
-%Time Series Classification to Improve Poultry Welfare
 
 \subsection{Fuzzy Logic}
-There is scope here to introduce fuzzy logic, as  Maharaj et al. outline ~\cite{MAHARAJ20111187}, fuzzy logic allows a non-strict representation of object membership to a set. These membership grades indicate the degree to which the data points belong to each cluster. In conventional clustering techniques data points right on the boundary of a cluster hold the same relationship to the cluster as those in the very centre. Using the membership grade, these points at edge of the cluster can still be inside the cluster but to a lesser degree than those at its centre. This may be necessary due to imprecise and uncertain data introduced through for example, faulty monitoring equipment. Fuzzy k-means is a clustering method that has proved effective in many scenarios since it permits the assignment of data elements to one or more clusters (Molina-Solana et al., 2017). Fuzzy logic is based on minimization of the following objective function:
+There is scope here to introduce fuzzy logic, as  Maharaj et al. outline ~\cite{MAHARAJ20111187}, fuzzy logic allows a non-strict representation of object membership to a set. These membership grades indicate the degree to which the data points belong to each cluster. In conventional clustering techniques data points right on the boundary of a cluster hold the same relationship to the cluster as those in the very centre. Using the membership grade, these points at edge of the cluster can still be inside the cluster but to a lesser degree than those at its centre. This may be necessary due to imprecise and uncertain data introduced through for example, faulty monitoring equipment. Fuzzy k-means is a clustering method that has proved effective in many scenarios since it permits the assignment of data elements to one or more clusters ~\cite{MOLINASOLANA2017598}. Fuzzy logic is based on minimization of the following objective function:
 
 \begin{equation}
 J_m = \sum_{i=1}^{n} \sum_{j=1}^{c} u_{ij}^{m} \Vert x_i - c_j \Vert  \qquad  \textrm{for}   \quad i \leq m < \infty
@@ -150,7 +125,7 @@ c_j = \frac{\sum_{i=1}^n u_{ij}^m . x_i}{\sum_{i=1}^n u_{ij}^m}
 %https://www-sciencedirect-com.cit.idm.oclc.org/science/article/pii/S0020025510005840 \\
 %https://home.deib.polimi.it/matteucc/Clustering/tutorial_html/cmeans.html
 
-Here, $m$ is the fuzzy parameter taking on any real number greater than 1. Values too close to 1 will result in a hard border like partition with all membership values close to 0 or 1. Large values of $m$ will result in homogeneous membership values close to $1/c$ ($c$ number of clusters). As such, neither values are used. In practice the most popular choice for the fuzzy parameter is $m = 2$, Hwang et al. chose $m = 2$ for their chosen model, as do Yang et al. in theirs. \\
+Here, $m$ is the fuzzy parameter taking on any real number greater than 1. Values too close to 1 will result in a hard border like partition with all membership values close to 0 or 1. Large values of $m$ will result in homogeneous membership values close to $1/c$ ($c$ number of clusters). As such, neither values are used. In practice the most popular choice for the fuzzy parameter is $m = 2$, Hwang et al. chose $m = 2$ for their chosen model ~\cite{hwang}, as do Yang et al. in theirs ~\cite{4522596}. \\
 
 % ADD THESE REFERENCES
 %https://www-sciencedirect-com.cit.idm.oclc.org/science/article/pii/S0020025510005840\\
@@ -160,12 +135,5 @@ Here, $m$ is the fuzzy parameter taking on any real number greater than 1. Value
 
 Additionally, $u_{ij}$ is the degree of membership of $x_i$ in the cluster $j$ $x_i$ is the $i$th d-dimensional measured data, $c_j$ is the d-dimensional centre of the cluster, and $\Vert * \Vert$ is any norm expressing the similarity between any measured data and the centre.
 
-\section{Supervised Learning}
-Random forests (RF) has become a popular technique in the fields of classification, prediction, studying variable importance, variable selection and outlier detection. Unlike the previous section, RF uses training data sets with observations comprising of explanatory variables and a response variable. 
-
-\\
 % ADD THESE REFERENCES
 %https://www-sciencedirect-com.cit.idm.oclc.org/science/article/pii/S0031320310003973
-\\
-***A BIT ABOUT TUNING RANDOM FOREST***\\
-Using random forest model to classify new customers.

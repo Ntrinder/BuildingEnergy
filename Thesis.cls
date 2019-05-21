@@ -194,7 +194,7 @@
       \smallskip
       {\LARGE \authornames \par}
       \vfill
-      {\large This thesis has been submitted in partial fulfillment for the \par}
+      {\large This dissertation has been submitted in partial fulfillment for the \par}
       {\large Higher Diploma: Data Science \& Analytics \par}
       \bigskip
       \bigskip

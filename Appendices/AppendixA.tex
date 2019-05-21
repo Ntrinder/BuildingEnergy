@@ -1,3 +1,209 @@
 \chapter{Code Snippets}
+\section{Retrieve Chunks}
+% CHUNKS
+\begin{lstlisting}[language=Python]
+# ------------------------------------------------------------------------
+# CSV TOO BIG -  SPLIT INTO CHUNKS -  RETRIEVE 1 CHUNK AT A TIME
+# ------------------------------------------------------------------------
+def get_chunks(path, nrows):
+    chunksize = 1000000
+    for chunk in pd.read_csv(path, chunksize=chunksize, nrows=nrows):
+        yield chunk
 
-Put appendix material in this section e.g. code snippets
+
+# ------------------------------------------------------------------------
+# RETURN A 1D DATA FRAME FOR EACH ANON_ID CONTAINING CONSUMPTION READINGS
+# ------------------------------------------------------------------------
+def get_id_values(data_frame, anon_id):
+    consumption_values = []
+    dates = []
+    for index, row in data_frame.iterrows():
+        if row['ANON_ID'] == anon_id:
+            consumption_values.append(row['ELECKWH'])
+            dates.append(row['ADVANCEDATETIME'])
+            continue
+    return pd.DataFrame([consumption_values], columns=dates, index={anon_id})
+
+
+# ------------------------------------------------------------------------
+# SETUP CHUNK IN CORRECT STRUCTURE FOR CLUSTERING
+# ------------------------------------------------------------------------
+def prepare_chunk(path, id_column, n_rows):
+    for chunk in get_chunks(path, n_rows):
+        chunk['ADVANCEDATETIME'] = pd.to_datetime(chunk['ADVANCEDATETIME'],
+                                                  format='%d%b%y:%H:%M:%S')
+
+        # get all the ids contained in the chunk
+        print('WORKING ~~~~> GETTING UNIQUE IDs...')
+        anon_ids = []
+        for index, row in chunk.iterrows():
+            if row[id_column] not in anon_ids:
+                anon_ids.append(row[id_column])
+                continue
+
+        time_series = pd.DataFrame()
+
+        # !expensive
+        print('WORKING ~~~~> GETTING VALUES...')
+        for anon_id in anon_ids:
+            time_series = time_series.append(get_id_values(chunk, anon_id))
+
+        return time_series
+
+\end{lstlisting}
+
+\newpage
+% CLUSTERING 
+\section{Clustering}
+\begin{lstlisting}[language=Python]
+# ------------------------------------------------------------------------
+# GET CLUSTERS FUNCTION
+# ------------------------------------------------------------------------
+def get_clusters(z, k):
+    cluster_array = fcluster(z, k, criterion='maxclust')
+
+    s = pd.Series(cluster_array)
+    clusters = s.unique()
+
+    for cluster in clusters:
+        cluster_indeces = s[s == cluster].index
+        print('Cluster %d has %d entries.' % (cluster, len(cluster_indeces)))
+
+    return s
+
+
+# ------------------------------------------------------------------------
+# MAIN FUNCTION
+# ------------------------------------------------------------------------
+def main():
+    data_path = 'data/time_series.csv'
+    time_series = pd.read_csv(data_path, index_col=0)
+    k = 3           # max number of clusters
+
+    # set the column names to dates
+    time_series.columns = pd.to_datetime(time_series.columns, format='%Y-%m-%d %H:%M:%S')
+
+    # build the cluster
+    z = hac.linkage(time_series, method='average', metric='euclidean')
+
+    # plot dendogram
+    plot = True
+    if plot:
+        plt.figure(figsize=(25, 15))
+        plt.title('Hierarchical Clustering Dendrogram')
+        plt.xlabel('index')
+        plt.ylabel('distance')
+        hac.dendrogram(
+            z,
+            leaf_rotation=90.,  # rotates the x axis labels
+            leaf_font_size=8,  # font size for the x axis labels
+        )
+        plt.savefig('images/diagram_1.png')
+
+    time_series['cluster_id'] = get_clusters(z, k).values
+    \end{lstlisting}
+    
+\newpage
+% PRE-PROCESSING FOR CLASSIFICATION 
+\section{Pre-Processing for Classification}
+\begin{lstlisting}[language=R]
+# ------------------------------------------------------------------------------
+# create dummy variables
+# ------------------------------------------------------------------------------
+dummies <- dummyVars(anonID~., data = data, levelsOnly=FALSE)
+data <- predict(dummies, newdata = data)
+
+
+# ------------------------------------------------------------------------------
+# find zero & near zero-variance predictors
+# ------------------------------------------------------------------------------
+near_zero_varience <- nearZeroVar(data)
+# check dimensions before removing nzv
+dim(data)
+data <- data[, -near_zero_varience]
+# check after removing, number of features reduced
+dim(data)
+
+
+# ------------------------------------------------------------------------------
+# identify & remove correlated features
+# ------------------------------------------------------------------------------
+data<-data[,colSums(is.na(data))==0]
+# create a correlation matrix and remove features with really high correlation
+corr_matrix <- cor(data)
+high_corr <- sum(abs(corr_matrix[upper.tri(corr_matrix)]) > .999)
+high_corr
+# 21 features which are almost perfectly correlated.
+
+# an idea of correlation before we remove features
+data <- na.rm(data)
+descrCor <- cor(data)
+summary(descrCor[upper.tri(descrCor)])
+
+
+# remove features which have > 0.75 corr
+highly_corr <- findCorrelation(corr_matrix, cutoff = .75)
+data <- data[,-highly_corr]
+dim(data)
+
+# an idea of correlation after we remove features
+descrCor <- cor(data)
+summary(descrCor[upper.tri(descrCor)])
+
+# ------------------------------------------------------------------------------
+# identify linear dependencies
+# ------------------------------------------------------------------------------
+combo_info <- findLinearCombos(data)
+combo_info
+# we found zero linear dependencies
+
+
+# ------------------------------------------------------------------------------
+# centre & scale
+# ------------------------------------------------------------------------------
+preprocess_values <- preProcess(data, method=c('center', 'scale'))
+data <- predict(preprocess_values, data)
+dim(data)
+
+# add back in the ids
+data <- cbind(anon_ids, data)
+\end{lstlisting}
+    
+\newpage
+% CLASSIFICATION
+\section{Building \& Tuning Random Forest Model}
+\begin{lstlisting}[language=R]
+data <- read.csv('data/ready_for_rf.csv')
+
+# remove labels and extra column
+data <- select(data, -c(anon_ids, X))
+
+# set cluster_id to factor
+data$cluster_id <- as.factor(data$cluster_id)
+
+# set seed then split the training data into train & test
+set.seed(254)
+train_indices <- createDataPartition(data$cluster_id, p=0.75, list=FALSE)
+train <- data[train_indices,]
+test <- data[-train_indices,]
+
+
+# ------------------------------------------------------------------------------
+# DEFINE OUR RESAMPLING AND SELECTION PARAMETERS ====
+# ------------------------------------------------------------------------------
+fit_control <- trainControl(method="repeatedcv",
+                            number=10,
+                            repeats=3,
+                            summaryFunction=multiClassSummary,
+                            selectionFunction='tolerance',
+                            savePredictions = "all")
+
+mtry <- 1:6
+tunegrid <- expand.grid(mtry=mtry)
+
+rf_model <- train(cluster_id ~ .,
+                  data=train, 
+                  method="rf", 
+                  trControl=fit_control,
+                  metric = "Accuracy")
+\end{lstlisting}
